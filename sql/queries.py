@@ -3,7 +3,9 @@ from decimal import Decimal
 from datetime import date 
 from typing import Any , Dict , List 
 from sqlalchemy import text
-from sqlalchemy.engine import Engine
+from sqlalchemy.engine import  Engine
+
+from PackVote.config import DEFAULT_MAX_RECS, RANK_DESCENDING
 
 def _parse_text_list(s: str|None) -> List[str]:
     if not s: return []
@@ -29,9 +31,9 @@ def fetch_group_context(engine:Engine, group_id:int)->Dict[str,Any]:
         all_pref , all_visited , all_dates , lengths , budgets = [] , [], [], [],[]
         for m in members :
             mid , uname = m['id'] , m['username']
-            pref = conn.exeute(text("SELECT trip_length_days , preferred_places ,visited_places , budget FROM preferences WHERE group_id=:gid AND member_id=:mid"),{"gid":group_id,"mid" : mid}).mappings().first()
+            pref = conn.exeute(text("""SELECT trip_length_days , preferred_places ,visited_places , budget FROM preferences WHERE group_id=:gid AND member_id=:mid"""),{"gid":group_id,"mid" : mid}).mappings().first()
 
-            avail = conn.execute(text(" SELECT available_date FROM member_availability WHERE member_id=:mid ORDER BY available_date"), {"mid": mid}).mappings().all()
+            avail = conn.execute(text("""SELECT available_date FROM member_availability WHERE member_id=:mid ORDER BY available_date """), {"mid": mid}).mappings().all()
             dates = [r["available_date"]for r in avail]
             all_dates.extend(dates)
 
@@ -62,4 +64,3 @@ def fetch_group_context(engine:Engine, group_id:int)->Dict[str,Any]:
         return ctx
     
 
-    
