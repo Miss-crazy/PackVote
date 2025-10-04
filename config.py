@@ -1,6 +1,6 @@
 import os
 
-DATABASE_URL = os.getenv("PackVote\sql\schema.db")
+DATABASE_URL = os.getenv("DATABASE_URL" , "sqlite:///sql/schema.db")
 
 #google
 GOOGLE_PLACES_API_KEY = os.getenv("GOOGLE_PLACES_API_KEY")
