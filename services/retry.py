@@ -1,6 +1,7 @@
 import time, requests
 from typing import Optional
 
+#sends an HTTP request and automatically retries if it fails
 class HttpFailure(Exception): ...
 def _retryable(status: int) -> bool:
     return status in (408, 425, 429, 500, 502, 503, 504)
@@ -18,6 +19,6 @@ def retry_request(method: str, url: str, *, max_tries: int = 3, backoff_base: fl
             last_exc = exc
             if attempt == max_tries:
                 raise
-        time.sleep(backoff_base * (2 ** (attempt - 1)))
+        time.sleep(backoff_base * (2 ** (attempt - 1))) #waiting a bit longer after each retry
     raise HttpFailure(f"unreachable: {last_exc}")
 
