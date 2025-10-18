@@ -7,9 +7,9 @@ def text_search(query : str , * , max_results : int =8 , field_mask : Optional[s
     headers ={
         "Content-Type" :"application/json" , 
         "X-Goog-Api-Key" : GOOGLE_PLACES_API_KEY,
-        "X-Goog-FieldMask" : field_mask or ",".json([
+        "X-Goog-FieldMask" : field_mask or ",".join([
             "places.id","places.displayName" , "places.formattedAddress","places.types",
-            "places.rating" , "places.userRatingCount" , "places.pricelevel","places.location",
+            "places.rating" , "places.userRatingCount" , "places.priceLevel","places.location",
             "places.nationalPhoneNumber" , "places.websiteUri" , "places.photos.name",
         ]),
     }
