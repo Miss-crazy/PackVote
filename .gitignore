@@ -1,0 +1,8 @@
+# Python caches
+__pycache__/
+*.pyc
+
+# SQLite binaries
+sql/*.db
+sql/*.sqlite
+*.sqlite
