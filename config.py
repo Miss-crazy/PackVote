@@ -1,6 +1,12 @@
 import os
+from pathlib import Path
 
-DATABASE_URL = os.getenv("DATABASE_URL" , "sqlite:///sql/schema.db")
+_BASE_DIR = Path(__file__).resolve().parent
+_DEFAULT_SQLITE_PATH = _BASE_DIR / "sql" / "packvote.sqlite"
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    f"sqlite:///{_DEFAULT_SQLITE_PATH.as_posix()}",
+)
 
 #google
 GOOGLE_PLACES_API_KEY = os.getenv("GOOGLE_PLACES_API_KEY")
