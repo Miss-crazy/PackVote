@@ -1,5 +1,7 @@
 # packvote/services/openai_fallback.py
 import json
+from datetime import date, datetime
+from decimal import Decimal
 from typing import Any, Dict, List, Optional
 from PackVote.config import OPENAI_API_KEY, OPEN_MODEL
 
@@ -7,6 +9,14 @@ try:
     from openai import OpenAI
 except ImportError:
     OpenAI = None
+
+def _json_default(value: Any) -> Any:
+    if isinstance(value, (datetime, date)):
+        return value.isoformat()
+    if isinstance(value, Decimal):
+        return str(value)
+    return value
+
 
 def summarize_to_recs(context_line: str, items: List[Dict[str, Any]], *, force: bool = False) -> List[Dict[str, Any]]:
     if not OPENAI_API_KEY or OpenAI is None:
@@ -37,11 +47,23 @@ def summarize_to_recs(context_line: str, items: List[Dict[str, Any]], *, force: 
             model=OPEN_MODEL,
             input=[
                 {"role":"system","content":"You are a concise, factual group-travel recommendation engine."},
-                {"role":"user","content":f"{context_line}\n\nPlaces (JSON):\n{json.dumps(items)}\n\nReturn 2-3 items."},
+                {
+                    "role":"user",
+                    "content":f"{context_line}\n\nPlaces (JSON):\n{json.dumps(items, default=_json_default)}\n\nReturn 2-3 items.",
+                },
             ],
             response_format={"type":"json_schema","json_schema":{"name":"recs","schema":schema}},
         )
-        return json.loads(resp.output_text)
+        result_text: Optional[str] = getattr(resp, "output_text", None)
+        if not result_text:
+            chunks: List[str] = []
+            for output in getattr(resp, "output", []) or []:
+                for content in getattr(output, "content", []) or []:
+                    text = getattr(content, "text", None)
+                    if text:
+                        chunks.append(text)
+            result_text = "\n".join(chunks)
+        return json.loads(result_text or "[]")
     except Exception:
         return [{
             "title": "Backup Plan", "summary": "Could not reach OpenAI reliably.",
