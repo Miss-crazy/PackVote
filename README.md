@@ -1,61 +1,119 @@
-PackVote
-PackVote is an AI-powered group travel planning system that generates personalized trip recommendations by aggregating user preferences and integrating data from APIs like Google Places, Amadeus, and OpenAI. It supports mock APIs for local testing without real API keys.
+<title>PackVote – AI-Powered Group Travel Planner</title>
+<style>
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #222;
+    line-height: 1.7;
+    margin: 0;
+    padding: 0 10%;
+  }
+  h1, h2, h3 {
+    color: #0078d7;
+  }
+  h1 {
+    border-bottom: 2px solid #0078d7;
+    padding-bottom: 0.4em;
+  }
+  p {
+    margin-bottom: 1em;
+  }
+  code {
+    background-color: #eee;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 90%;
+  }
+  pre {
+    background: #272822;
+    color: #f8f8f2;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  ul {
+    list-style-type: square;
+    margin-left: 1.5em;
+  }
+  .section {
+    margin-bottom: 2.5em;
+  }
+  .highlight {
+    background-color: #e9f5ff;
+    padding: 0.6em 1em;
+    border-left: 5px solid #0078d7;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
 
-Features
-Modular architecture with clear separation between core service logic, pipelines, and CLI
+<h1>🌍 PackVote – AI-Powered Group Travel Planner</h1>
 
-Integration with external APIs for rich place data and AI-generated recommendations
+<p><strong>PackVote</strong> is an AI-powered group travel planning system that generates personalized trip recommendations by aggregating user preferences and integrating data from APIs like <strong>Google Places</strong>, <strong>Amadeus</strong>, and <strong>OpenAI</strong>. It also includes mock APIs for local testing without real API keys.</p>
 
-Mock API implementations for offline development and testing without API credentials
+<div class="section">
+  <h2>🚀 Features</h2>
+  <ul>
+    <li>Modular architecture with clear separation between core service logic, pipelines, and CLI</li>
+    <li>Integration with external APIs for rich place data and AI-generated recommendations</li>
+    <li>Mock API implementations for offline development and testing without API credentials</li>
+    <li>Command-line interface (CLI) for easy recommendation generation</li>
+    <li>Uses SQLite for lightweight data persistence</li>
+    <li>Environment variable-based configuration for API keys and mock toggling</li>
+  </ul>
+</div>
 
-Command-line interface for easy recommendation generation
+<div class="section">
+  <h2>📂 Project Structure</h2>
+  <div class="highlight">
+    <p><code>PackVote/cli/</code> — CLI entrypoints</p>
+    <p><code>PackVote/pipelines/</code> — Workflow orchestration</p>
+    <p><code>PackVote/services/</code> — API service modules and business logic</p>
+    <p><code>PackVote/sql/</code> — Database setup and queries</p>
+    <p><code>config.py</code> — Project-specific settings and environment config</p>
+    <p><code>requirements.txt</code> — Python package dependencies</p>
+  </div>
+</div>
 
-Uses SQLite for lightweight data persistence
+<div class="section">
+  <h2>💾 Data Storage and Group Planning Model</h2>
+  <p><strong>PackVote</strong> uses a lightweight <code>SQLite</code> database (<code>packvote.sqlite</code>) to persistently store data related to groups, members, places, and recommendations. This allows maintaining state across runs and serves as the single source of truth for travel planning.</p>
 
-Environment variable-based configuration for API keys and mock toggling
+  <h3>Database Contents</h3>
+  <ul>
+    <li><strong>Group ID:</strong> Identifier for a user group traveling together. Each group can have multiple members.</li>
+    <li><strong>Member ID:</strong> Uniquely identifies each user/member, enabling tracking of individual preferences (availability, preferred places, budget, etc.).</li>
+    <li><strong>Places & Recommendations:</strong> Stores suggested places (e.g., museums, cafes) and AI-generated summaries tailored to the group.</li>
+    <li><strong>Historical Records:</strong> Maintains past recommendations and user interactions for iterative improvement.</li>
+  </ul>
+</div>
 
-Project Structure
-PackVote/cli/ — CLI entrypoints
+<div class="section">
+  <h2>🧭 Group-Based Recommendations</h2>
+  <p>The system aggregates member preferences and constraints to generate <strong>personalized group recommendations</strong>. It produces the <strong>top 5 most relevant destinations</strong> that best match the collective interests, ensuring a consensus-based travel plan.</p>
+</div>
 
-PackVote/pipelines/ — Workflow orchestration
+<div class="section">
+  <h2>🧪 Mock APIs for Cost Efficiency & Testing</h2>
+  <p>To minimize cost and simplify development, PackVote uses mock APIs that emulate:</p>
+  <ul>
+    <li>Google Places API</li>
+    <li>Amadeus Travel API</li>
+    <li>OpenAI GPT API for summarization</li>
+  </ul>
+  <p>This design avoids real API keys, prevents overuse of paid resources, and supports reliable local testing.</p>
+</div>
 
-PackVote/services/ — API service modules and business logic
+<div class="section">
+  <h2>🔑 Future Use of Real APIs</h2>
+  <p>Switching from mock to live mode is seamless — simply toggle mock usage in environment settings and provide valid credentials.</p>
+  <p>Once activated, the system fetches live data and updates the database with real places and AI-driven insights, reflecting changes in persistent storage.</p>
 
-PackVote/sql/ — Database setup and queries
+  <div class="highlight">
+    <p><strong>✅ Zero Code Rewrite:</strong> Transitioning from mock to production requires no code changes — ensuring flexibility and scalability.</p>
+  </div>
+</div>
 
-config.py — Project-specific settings and environment config
-
-requirements.txt — Python package dependencies
-
-Data Storage and Group Planning Model
-PackVote leverages a lightweight SQLite database (packvote.sqlite) to persistently store data related to groups, members, places, and recommendations. This enables maintaining state across multiple runs and serves as the source of truth for your travel planning.
-
-Database Contents
-Group ID: Identifier for a user group traveling together. Each group can have multiple members.
-
-Member ID: Each user/member within a group is uniquely identified, allowing individual preferences to be tracked separately. Members can specify availability, preferred places, visited places, trip duration, and budget constraints.
-
-Places and Recommendations: Stores details about suggested places (museum, parks, cafes, etc.) and AI-generated recommendation summaries tailored for the group based on aggregated member data.
-
-Historical Records: Keeps track of past recommendations and user interactions for reference and iterative improvement.
-
-Group-Based Recommendations
-The system uses the concept of group travel by aggregating individual member preferences and constraints to compute personalized travel recommendations for the entire group. This offers a consensus plan accommodating various interests and schedules.
-
-The recommendation algorithm produces the top 5 most relevant recommendations for the group, prioritizing places and activities that best match combined preferences and inputs.
-
-Mock APIs for Cost Efficiency & Testing
-To minimize cost and ease development, the current implementation uses mock APIs which emulate:
-
-Google Places API
-
-Amadeus Travel API
-
-OpenAI GPT API for summarization
-
-This approach avoids the need for live API keys, prevents overuse of paid resources, and enables reliable local testing.
-
-Future Use of Real APIs
-Switching to actual APIs is straightforward: toggle mock usage in environment settings and provide valid credentials. The system will then fetch live data, update the database with real places and AI recommendations, reflecting all changes in persistent storage.
-
-This design ensures zero code rewrite when transitioning from mock to production, promoting flexibility and scalability.
+</body>
+</html>
