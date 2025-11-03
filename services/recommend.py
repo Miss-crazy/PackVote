@@ -1,5 +1,17 @@
 from typing import Any, Dict, List
-from PackVote.services.openai_fallback import summarize_to_recs
+from PackVote.services import api_switcher
+
+google_places = api_switcher.google_places
+amadeus = api_switcher.amadeus
+openai_fallback = api_switcher.openai_fallback  # This has the summarize_to_recs method now
+
+def get_display_text(place: dict) -> str:
+    disp = place.get("displayName", "")
+    if isinstance(disp, dict):
+        return disp.get("text", "")
+    if isinstance(disp, str):
+        return disp
+    return ""
 
 def build_recommendations_from_facts(facts: Dict[str, Any]) -> List[Dict[str, Any]]:
     google_all = facts.get("google") or []
@@ -7,7 +19,8 @@ def build_recommendations_from_facts(facts: Dict[str, Any]) -> List[Dict[str, An
     first_error = facts.get("first_error")
 
     if not google_all and not amadeus_all:
-        return summarize_to_recs("APIs returned nothing; craft generic but actionable group ideas.", [], force=True)
+        # Call method from the openai_fallback instance
+        return openai_fallback.summarize_to_recs("APIs returned nothing; craft generic but actionable group ideas.", [], force=True)
 
     if first_error:
         slim = [{
@@ -17,18 +30,19 @@ def build_recommendations_from_facts(facts: Dict[str, Any]) -> List[Dict[str, An
             "rating": p.get("rating"),
             "website": (p.get("_details") or {}).get("websiteUri"),
         } for p in google_all[:6]]
-        return summarize_to_recs(f"Partial data available ({first_error}). Build concise suggestions.", slim, force=True)
+        return openai_fallback.summarize_to_recs(f"Partial data available ({first_error}). Build concise suggestions.", slim, force=True)
 
     slim = [{
-        "title": p.get("displayName", {}).get("text") or p.get("displayName"),
+        "title": get_display_text(p),
         "address": p.get("formattedAddress"),
         "types": p.get("types"),
         "rating": p.get("rating"),
         "website": (p.get("_details") or {}).get("websiteUri"),
     } for p in google_all[:6]]
 
-    recs = summarize_to_recs("Craft group-friendly recommendations from these places.", slim, force=False)
-    if recs: return recs
+    recs = openai_fallback.summarize_to_recs("Craft group-friendly recommendations from these places.", slim, force=False)
+    if recs: 
+        return recs
 
     # naive fallback if OpenAI not available
     out: List[Dict[str, Any]] = []
