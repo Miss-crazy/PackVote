@@ -19,21 +19,21 @@ PackVote is an AI-powered group travel planning system that generates personaliz
 
 ### Environment Setup using Conda
 
-conda create -n packvote_env python=3.10 pip -y
-conda activate packvote_env
-pip install -r requirements.txt
+conda create -n packvote_env python=3.10 pip -y <br>
+conda activate packvote_env<br>
+pip install -r requirements.txt<br>
 
 ### Running the Project with Mock APIs
 
 - On PowerShell (Windows):
 
-$env:USE_MOCK_APIS = "true"
-python -m PackVote.cli.generate_recs 1
+$env:USE_MOCK_APIS = "true"<br>
+python -m PackVote.cli.generate_recs 1<br>
 
 - On Linux/macOS Terminal:
 
-export USE_MOCK_APIS=true
-python -m PackVote.cli.generate_recs 1
+export USE_MOCK_APIS=true<br>
+python -m PackVote.cli.generate_recs 1<br>
 
 
 ---
